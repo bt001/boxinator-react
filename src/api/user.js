@@ -2,12 +2,16 @@ import { createHeaders } from "./index"
 
 const apiUrl = process.env.REACT_APP_API_URL
 
-const checkForUser = async (username) => {
+const checkForUser = async (email) => {
     try {
-        const response = await fetch(`${apiUrl}?username=${username}`)
+        let fetchString = `${apiUrl}users/login/${email}`
+        alert(fetchString)
+        const response = await fetch(fetchString)        
         if (!response.ok) {
-            throw new Error("Could not complete request")
+            alert("resp not ok")
+            throw new Error("Could not complete request.")
         }
+        alert("received some kind of data")
         const data = await response.json()
         return [null, data]
     }
@@ -16,18 +20,18 @@ const checkForUser = async (username) => {
     }
 }
 
-const createUser = async (username) => {
+const createUser = async (email) => {
     try {
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: createHeaders(),
             body: JSON.stringify({
-                username,
+                email,
                 translations: []
             })
         })
         if (!response.ok) {
-            throw new Error("Could not create user with username " + username)
+            throw new Error("Could not create user with email " + email)
         }
         const data = await response.json()
         return [null, data]
@@ -37,19 +41,26 @@ const createUser = async (username) => {
     }
 }
 
-export const loginUser = async (username) => {
-    const [checkError, user] = await checkForUser(username)
+export const loginUser = async (email,pw) => {
+    alert(
+        "pw =" + pw
+    )
+    const [checkError, user] = await checkForUser(email)
 
     if (checkError !== null) {
+        alert("Error!")
         return [checkError, null]
     }
 
-    if (user.length > 0) {
-        return [null, user.pop()]
-    }
-
-    return await createUser(username)
-
+    if (user !== null) {
+        alert("lol")
+        alert(user.password)
+        if (pw === user.password)
+            {
+                return [null, user]
+            }           
+    }                
+    
 }
 
 export const userById = async (userId) => {

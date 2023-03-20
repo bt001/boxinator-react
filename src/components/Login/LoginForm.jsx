@@ -7,7 +7,7 @@ import { useUser } from "../../context/UserContext";
 import { STORAGE_KEY_USER } from "../../const/storageKeys";
 
 
-const usernameConfig = {
+const emailConfig = {
     required: true,
     minLength: 3
 }
@@ -26,9 +26,10 @@ const LoginForm = () => {
         }
     }, [user, navigate])
 
-    const onSubmit = async ({ username }) => {
+    const onSubmit = async ({ email , password }) => {
         setLoading(true)
-        const [error, userResponse] = await loginUser(username)
+        alert("password is " + password)
+        const [error, userResponse] = await loginUser(email,password)
         if (error !== null) {
             setApiError(error)
         }
@@ -40,16 +41,16 @@ const LoginForm = () => {
     }
 
     const errorMessage = (() => {
-        if (!errors.username) {
+        if (!errors.email) {
             return null
         }
 
-        if (errors.username.type === "required") {
-            return <span>Username is required</span>
+        if (errors.email.type === "required") {
+            return <span>email is required</span>
         }
 
-        if (errors.username.type === "minLength") {
-            return <span>Username is too short (min. 3)</span>
+        if (errors.email.type === "minLength") {
+            return <span>email is too short (min. 3)</span>
         }
     })()
 
@@ -58,15 +59,15 @@ const LoginForm = () => {
             <h2>What's your name</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <fieldset>
-                    <label htmlFor="username">Username: </label>
-                    <input type="text" placeholder="itachi" {...register("username", usernameConfig)} />
+                    <label htmlFor="email">Email: </label>
+                    <input type="text" placeholder="itachi" {...register("email", emailConfig)} />
                     {errorMessage}
                 </fieldset>
                 <fieldset>
                     <label htmlFor="password">Password: </label>
-                    <input type="password" />
+                    <input type="password" {...register("password")} />
                 </fieldset>
-                <button type="submit" disabled={loading} >Continue</button>
+                <button type="submit" disabled={loading}>Continue</button>
 
 
                 {loading && <p>Logging in... </p>}
